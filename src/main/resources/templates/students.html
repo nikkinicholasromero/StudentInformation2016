@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Student Information</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
+    <link rel="stylesheet" href="/AdminLTE-2.3.3/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" />
+    <link rel="stylesheet" href="/AdminLTE-2.3.3/plugins/datatables/dataTables.bootstrap.css" />
+    <link rel="stylesheet" href="/AdminLTE-2.3.3/dist/css/AdminLTE.min.css" />
+    <link rel="stylesheet" href="/AdminLTE-2.3.3/dist/css/skins/_all-skins.min.css" />
+    <link rel="stylesheet" href="/studentinformation/css/studentinformation.css" />
+    <link rel="stylesheet" href="/studentinformation/css/students.css" />
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <header class="main-header">
+        <a href="/" class="logo">
+            <span class="logo-mini"><b>SIS</b></span>
+            <span class="logo-lg"><b>Student</b>Information</span>
+        </a>
+        <nav class="navbar navbar-static-top">
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+        </nav>
+    </header>
+    <aside class="main-sidebar">
+        <section class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/students"><i class="fa fa-circle-o"></i><span>Students</span></a></li>
+                <li><a href="/professors"><i class="fa fa-circle-o"></i><span>Professors</span></a></li>
+                <li><a href="/subjects"><i class="fa fa-circle-o"></i><span>Subjects</span></a></li>
+                <li><a href="/rooms"><i class="fa fa-circle-o"></i><span>Rooms</span></a></li>
+            </ul>
+        </section>
+    </aside>
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1>
+                Students
+                <small>Control Panel</small>
+            </h1>
+        </section>
+
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Student List</h3>
+                            <button type="button" id="add-student-button" class="btn btn-block btn-success pull-right add-button" data-toggle="modal" data-target="#add-student-modal">Add Student</button>
+                        </div>
+                        <div class="box-body">
+                            <table id="student-table" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>UUID</th>
+                                    <th>Student Number</th>
+                                    <th>First Name</th>
+                                    <th>Middle Name</th>
+                                    <th>Last Name</th>
+                                    <th>Gender</th>
+                                    <th>Birth Date</th>
+                                    <th>Street</th>
+                                    <th>City</th>
+                                    <th>Province</th>
+                                    <th>Date Created</th>
+                                    <th>Date Last Modified</th>
+                                    <th id="actions-th">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th>UUID</th>
+                                    <th>Student Number</th>
+                                    <th>First Name</th>
+                                    <th>Middle Name</th>
+                                    <th>Last Name</th>
+                                    <th>Gender</th>
+                                    <th>Birth Date</th>
+                                    <th>Street</th>
+                                    <th>City</th>
+                                    <th>Province</th>
+                                    <th>Date Created</th>
+                                    <th>Date Last Modified</th>
+                                    <th id="actions-th">Actions</th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> 0.0.0
+        </div>
+        <strong>Copyright &copy; 2016-2017 <a href="https://www.facebook.com/nikkinicholasromero" target="_blank">Nikki Nicholas Romero</a>.</strong> All rights
+        reserved.
+    </footer>
+
+    <div class="modal fade add-modal" id="add-student-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modal-label">Add Student</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="student-number">Student Number</label>
+                        <input type="text" class="form-control" id="student-number" placeholder="Student Number" />
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="first-name">First Name</label>
+                        <input type="text" class="form-control" id="first-name" placeholder="First Name" />
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="middle-name">Middle Name</label>
+                        <input type="text" class="form-control" id="middle-name" placeholder="Middle Name" />
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" class="form-control" id="last-name" placeholder="Last Name" />
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <input type="text" class="form-control" id="gender" placeholder="Gender" />
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="birth-date">Birth Date</label>
+                        <input type="text" class="form-control" id="birth-date" placeholder="Birth Date" />
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="street">Street</label>
+                        <input type="text" class="form-control" id="street" placeholder="Street" />
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" class="form-control" id="city" placeholder="City" />
+                        <span class="help-block"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="province">Province</label>
+                        <input type="text" class="form-control" id="province" placeholder="Province" />
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary save-button">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="notification-modal"><p>Operation is successful</p><a class="close-notification-modal pull-right"><i class="fa fa-fw fa-close"></i></a></div>
+
+<script src="/AdminLTE-2.3.3/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+<script src="/AdminLTE-2.3.3/bootstrap/js/bootstrap.min.js"></script>
+<script src="/AdminLTE-2.3.3/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/AdminLTE-2.3.3/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/AdminLTE-2.3.3/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<script src="/AdminLTE-2.3.3/plugins/fastclick/fastclick.js"></script>
+<script src="/AdminLTE-2.3.3/dist/js/app.min.js"></script>
+<script src="/AdminLTE-2.3.3/dist/js/demo.js"></script>
+<script src="/studentinformation/js/studentinformation.js"></script>
+<script src="/studentinformation/js/students.js"></script>
+</body>
+</html>

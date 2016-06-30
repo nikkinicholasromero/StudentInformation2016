@@ -1,0 +1,58 @@
+.dataTable th#actions-th {
+    width: 158px !important;
+}
+
+.dataTable button {
+    width: 80px !important;
+    float: left !important;
+    margin: 0 5px 0 5px !important;
+}
+
+.hide-column {
+    display: none;
+}
+
+.add-button {
+    width: 120px;
+}
+
+.help-block {
+    display: hidden;
+}
+
+.notification-modal {
+    position: fixed;
+    left: 0;
+    bottom: -50px;
+    width: 500px;
+    height: 50px;
+    z-index: 1000;
+    border-top-right-radius: 10px;
+    padding: 15px 20px 15px 20px;
+    font-size: 1.2em;
+    background: #357ca5;
+    color: #fff;
+
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.notification-modal-show {
+    bottom: 0px;
+
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.notification-modal p {
+    float: left;
+}
+
+.close-notification-modal {
+    color: #fff;
+    cursor: pointer;
+}
