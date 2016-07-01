@@ -2,6 +2,7 @@ package ph.com.nikkinicholas.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import ph.com.nikkinicholas.domain.Student;
 import ph.com.nikkinicholas.repository.StudentRepository;
@@ -22,7 +23,7 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public List<Student> getStudentForDataTable(DataTablesRequest dataTablesRequest) {
+    public List<Student> getStudentForDataTable(final DataTablesRequest dataTablesRequest) {
         return studentRepository.getStudentForDataTable(dataTablesRequest);
     }
 
@@ -30,38 +31,48 @@ public class StudentService {
         return studentRepository.getStudentCountBeforeFiltering();
     }
 
-    public int getStudentCountAfterFiltering(DataTablesRequest dataTablesRequest) {
+    public int getStudentCountAfterFiltering(final DataTablesRequest dataTablesRequest) {
         return studentRepository.getStudentCountAfterFiltering(dataTablesRequest);
     }
 
-    public Student getStudentByUuid(final String uuid) {
-        return studentRepository.getStudentByUuid(uuid);
+    public Student getStudent(final Student student) {
+        return studentRepository.getStudent(student);
     }
 
-    public ValidationResult createStudent(Student student) {
-        ValidationResult validationResult = validateCreateStudent(student);
+    public ValidationResult createStudent(final Student student) {
+        ValidationResult validationResult = validateStudent(student);
         if(validationResult.getStatus() == Status.SUCCESS) {
-            student.setUuid(UUID.randomUUID().toString());
-            studentRepository.createStudent(student);
+            try {
+                student.setUuid(UUID.randomUUID().toString());
+                studentRepository.createStudent(student);
+            } catch (DuplicateKeyException e) {
+                validationResult.addErrorCode(ErrorCode.STUDENT_STUDENT_NUMBER_DUPLICATE);
+            }
         }
         return validationResult;
     }
 
-    public void updateStudent(Student student) {
-        studentRepository.updateStudent(student);
+    public ValidationResult updateStudent(final Student student) {
+        ValidationResult validationResult = validateStudent(student);
+        if(validationResult.getStatus() == Status.SUCCESS) {
+            try {
+                studentRepository.updateStudent(student);
+            } catch (DuplicateKeyException e) {
+                validationResult.addErrorCode(ErrorCode.STUDENT_STUDENT_NUMBER_DUPLICATE);
+            }
+        }
+        return validationResult;
     }
 
-    public void deleteStudentByUuid(final String uuid) {
-        studentRepository.deleteStudentByUuid(uuid);
+    public void deleteStudent(final Student student) {
+        studentRepository.deleteStudent(student);
     }
 
-    private ValidationResult validateCreateStudent(Student student) {
+    private ValidationResult validateStudent(final Student student) {
         ValidationResult validationResult = new ValidationResult();
 
         if(StringUtils.isEmpty(student.getStudentNumber())) {
             validationResult.addErrorCode(ErrorCode.STUDENT_STUDENT_NUMBER_MISSING);
-        } else if(isStudentNumberAlreadyExist(student.getStudentNumber())) {
-            validationResult.addErrorCode(ErrorCode.STUDENT_STUDENT_NUMBER_DUPLICATE);
         } else if(student.getStudentNumber().length() > 15) {
             validationResult.addErrorCode(ErrorCode.STUDENT_STUDENT_NUMBER_TOO_LONG);
         }
@@ -113,9 +124,5 @@ public class StudentService {
         }
 
         return validationResult;
-    }
-
-    private boolean isStudentNumberAlreadyExist(final String studentNumber) {
-        return studentRepository.isStudentNumberAlreadyExist(studentNumber);
     }
 }

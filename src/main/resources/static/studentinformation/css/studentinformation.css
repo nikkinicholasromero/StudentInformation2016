@@ -1,3 +1,12 @@
+.dataTable {
+    table-layout: fixed;
+}
+
+.dataTable td {
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
 .dataTable th#actions-th {
     width: 158px !important;
 }

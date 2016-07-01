@@ -12,6 +12,7 @@ public class Subject {
     private String code = "";
     private String title = "";
     private double units = 0.0;
+    private double hours = 0.0;
     @JsonFormat(pattern  = "yyyy-MM-dd' - 'hh:mm:ss")
     private Date dateCreated = new Date();
     @JsonFormat(pattern  = "yyyy-MM-dd' - 'hh:mm:ss")
@@ -49,6 +50,14 @@ public class Subject {
         this.units = units;
     }
 
+    public double getHours() {
+        return hours;
+    }
+
+    public void setHours(double hours) {
+        this.hours = hours;
+    }
+
     public Date getDateCreated() {
         return dateCreated;
     }
@@ -72,6 +81,7 @@ public class Subject {
                 ", code='" + code + '\'' +
                 ", title='" + title + '\'' +
                 ", units=" + units +
+                ", hours=" + hours +
                 ", dateCreated=" + dateCreated +
                 ", dateLastModified=" + dateLastModified +
                 '}';

@@ -2,6 +2,7 @@ package ph.com.nikkinicholas.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import ph.com.nikkinicholas.domain.Room;
 import ph.com.nikkinicholas.repository.RoomRepository;
@@ -21,7 +22,7 @@ public class RoomService {
     @Autowired
     private RoomRepository roomRepository;
 
-    public List<Room> getRoomForDataTable(DataTablesRequest dataTablesRequest) {
+    public List<Room> getRoomForDataTable(final DataTablesRequest dataTablesRequest) {
         return roomRepository.getRoomForDataTable(dataTablesRequest);
     }
 
@@ -29,46 +30,53 @@ public class RoomService {
         return roomRepository.getRoomCountBeforeFiltering();
     }
 
-    public int getRoomCountAfterFiltering(DataTablesRequest dataTablesRequest) {
+    public int getRoomCountAfterFiltering(final DataTablesRequest dataTablesRequest) {
         return roomRepository.getRoomCountAfterFiltering(dataTablesRequest);
     }
 
-    public Room getRoomByUuid(final String uuid) {
-        return roomRepository.getRoomByUuid(uuid);
+    public Room getRoom(Room room) {
+        return roomRepository.getRoom(room);
     }
 
-    public ValidationResult createRoom(Room room) {
-        ValidationResult validationResult = validateCreateRoom(room);
+    public ValidationResult createRoom(final Room room) {
+        ValidationResult validationResult = validateRoom(room);
         if(validationResult.getStatus() == Status.SUCCESS) {
-            room.setUuid(UUID.randomUUID().toString());
-            roomRepository.createRoom(room);
+            try {
+                room.setUuid(UUID.randomUUID().toString());
+                roomRepository.createRoom(room);
+            } catch (DuplicateKeyException e) {
+                validationResult.addErrorCode(ErrorCode.ROOM_ROOM_NUMBER_DUPLICATE);
+            }
         }
         return validationResult;
     }
 
-    public void updateRoom(Room room) {
+    public ValidationResult updateRoom(final Room room) {
         roomRepository.updateRoom(room);
+        ValidationResult validationResult = validateRoom(room);
+        if(validationResult.getStatus() == Status.SUCCESS) {
+            try {
+                roomRepository.updateRoom(room);
+            } catch (DuplicateKeyException e) {
+                validationResult.addErrorCode(ErrorCode.ROOM_ROOM_NUMBER_DUPLICATE);
+            }
+        }
+        return validationResult;
     }
 
-    public void deleteRoomByUuid(final String uuid) {
-        roomRepository.deleteRoomByUuid(uuid);
+    public void deleteRoom(final Room room) {
+        roomRepository.deleteRoom(room);
     }
 
-    private ValidationResult validateCreateRoom(Room room) {
+    private ValidationResult validateRoom(final Room room) {
         ValidationResult validationResult = new ValidationResult();
 
         if(StringUtils.isEmpty(room.getRoomNumber())) {
             validationResult.addErrorCode(ErrorCode.ROOM_ROOM_NUMBER_MISSING);
-        } else if(isRoomNumberAlreadyExist(room.getRoomNumber())) {
-            validationResult.addErrorCode(ErrorCode.ROOM_ROOM_NUMBER_DUPLICATE);
         } else if(room.getRoomNumber().length() > 150) {
             validationResult.addErrorCode(ErrorCode.ROOM_ROOM_NUMBER_TOO_LONG);
         }
 
         return validationResult;
-    }
-
-    private boolean isRoomNumberAlreadyExist(final String roomNumber) {
-        return roomRepository.isRoomNumberAlreadyExist(roomNumber);
     }
 }

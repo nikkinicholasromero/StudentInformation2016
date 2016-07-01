@@ -51,14 +51,15 @@
                 <small>Control Panel</small>
             </h1>
         </section>
-
         <section class="content">
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
                             <h3 class="box-title">Professor List</h3>
-                            <button type="button" id="add-professor-button" class="btn btn-block btn-success pull-right add-button" data-toggle="modal" data-target="#add-professor-modal">Add Professor</button>
+                            <button type="button" class="btn btn-block btn-success pull-right add-button" data-toggle="modal" data-target="#modal-form">
+                                Add Professor
+                            </button>
                         </div>
                         <div class="box-body">
                             <table id="professor-table" class="table table-bordered table-striped">
@@ -95,7 +96,7 @@
                                     <th>Province</th>
                                     <th>Date Created</th>
                                     <th>Date Last Modified</th>
-                                    <th id="actions-th">Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -104,89 +105,143 @@
                 </div>
             </div>
         </section>
+        <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-label">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="modal-label">Add Professor</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="professor-number">Professor Number</label>
+                                    <input type="text" class="form-control" id="professor-number" placeholder="Professor Number" maxlength="15" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-4">
+                                <div class="form-group">
+                                    <label for="first-name">First Name</label>
+                                    <input type="text" class="form-control" id="first-name" placeholder="First Name" maxlength="50" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-4">
+                                <div class="form-group">
+                                    <label for="middle-name">Middle Name</label>
+                                    <input type="text" class="form-control" id="middle-name" placeholder="Middle Name" maxlength="50" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-4">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label for="last-name">Last Name</label>
+                                        <input type="text" class="form-control" id="last-name" placeholder="Last Name" maxlength="50" />
+                                        <span class="help-block"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <select class="form-control" id="gender" >
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="birth-date">Birth Date</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" class="form-control" data-inputmask="'alias': 'yyyy-mm-dd'" id="birth-date" />
+                                    </div>
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="street">Street</label>
+                                    <input type="text" class="form-control" id="street" placeholder="Street" maxlength="150" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="city">City</label>
+                                    <input type="text" class="form-control" id="city" placeholder="City" maxlength="100" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="province">Province</label>
+                                    <input type="text" class="form-control" id="province" placeholder="Province" maxlength="100" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary save-button">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notification-modal">
+            <p>Operation is successful</p>
+            <a class="close-notification-modal pull-right">
+                <i class="fa fa-fw fa-close"></i>
+            </a>
+        </div>
     </div>
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
             <b>Version</b> 0.0.0
         </div>
-        <strong>Copyright &copy; 2016-2017 <a href="https://www.facebook.com/nikkinicholasromero" target="_blank">Nikki Nicholas Romero</a>.</strong> All rights
-        reserved.
+        <strong>
+            Copyright &copy; 2016-2017
+            <a href="https://www.facebook.com/nikkinicholasromero" target="_blank">
+                Nikki Nicholas Romero
+            </a>.
+        </strong>
+        All rights reserved.
     </footer>
-
-    <div class="modal fade add-modal" id="add-professor-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="modal-label">Add Professor</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="professor-number">Professor Number</label>
-                        <input type="text" class="form-control" id="professor-number" placeholder="Professor Number" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="first-name">First Name</label>
-                        <input type="text" class="form-control" id="first-name" placeholder="First Name" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="middle-name">Middle Name</label>
-                        <input type="text" class="form-control" id="middle-name" placeholder="Middle Name" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="last-name">Last Name</label>
-                        <input type="text" class="form-control" id="last-name" placeholder="Last Name" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <input type="text" class="form-control" id="gender" placeholder="Gender" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="birth-date">Birth Date</label>
-                        <input type="text" class="form-control" id="birth-date" placeholder="Birth Date" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="street">Street</label>
-                        <input type="text" class="form-control" id="street" placeholder="Street" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="city">City</label>
-                        <input type="text" class="form-control" id="city" placeholder="City" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="province">Province</label>
-                        <input type="text" class="form-control" id="province" placeholder="Province" />
-                        <span class="help-block"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary save-button">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-
-<div class="notification-modal"><p>Operation is successful</p><a class="close-notification-modal pull-right"><i class="fa fa-fw fa-close"></i></a></div>
-
 <script src="/AdminLTE-2.3.3/plugins/jQuery/jQuery-2.2.0.min.js"></script>
 <script src="/AdminLTE-2.3.3/bootstrap/js/bootstrap.min.js"></script>
 <script src="/AdminLTE-2.3.3/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="/AdminLTE-2.3.3/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="/AdminLTE-2.3.3/plugins/input-mask/jquery.inputmask.js"></script>
+<script src="/AdminLTE-2.3.3/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+<script src="/AdminLTE-2.3.3/plugins/input-mask/jquery.inputmask.extensions.js"></script>
 <script src="/AdminLTE-2.3.3/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 <script src="/AdminLTE-2.3.3/plugins/fastclick/fastclick.js"></script>
 <script src="/AdminLTE-2.3.3/dist/js/app.min.js"></script>
 <script src="/AdminLTE-2.3.3/dist/js/demo.js"></script>
 <script src="/studentinformation/js/studentinformation.js"></script>
 <script src="/studentinformation/js/professors.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#birth-date").inputmask();
+    });
+</script>
 </body>
 </html>

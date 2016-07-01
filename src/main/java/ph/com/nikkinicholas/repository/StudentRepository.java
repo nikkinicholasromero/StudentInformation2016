@@ -16,7 +16,7 @@ public class StudentRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Student> getStudentForDataTable(DataTablesRequest dataTablesRequest) {
+    public List<Student> getStudentForDataTable(final DataTablesRequest dataTablesRequest) {
         String columnOrders = "";
         final int orderColumn = dataTablesRequest.getOrder().get(0).getColumn();
         final String orderDir = dataTablesRequest.getOrder().get(0).getDir();
@@ -71,16 +71,15 @@ public class StudentRepository {
         return jdbcTemplate.queryForObject(SQL, Integer.class);
     }
 
-    public int getStudentCountAfterFiltering(DataTablesRequest dataTablesRequest) {
+    public int getStudentCountAfterFiltering(final DataTablesRequest dataTablesRequest) {
         final String searchCriteria = "%" + dataTablesRequest.getSearch().getValue() + "%";
         final String SQL = "select count(*) from students where is_deleted = false and student_number like ?";
         return jdbcTemplate.queryForObject(SQL, new Object[] { searchCriteria }, Integer.class);
     }
 
-    public Student getStudentByUuid(final String uuid) {
+    public Student getStudent(final Student student) {
         final String SQL = "select * from students where uuid = ?";
-        return jdbcTemplate.queryForObject(SQL, new Object[]{uuid}, (rs, rowNum) -> {
-            Student student = new Student();
+        return jdbcTemplate.queryForObject(SQL, new Object[]{student.getUuid()}, (rs, rowNum) -> {
             student.setUuid(rs.getString("uuid"));
             student.setStudentNumber(rs.getString("student_number"));
             student.setFirstName(rs.getString("first_name"));
@@ -95,24 +94,18 @@ public class StudentRepository {
         });
     }
 
-    public void createStudent(Student student) {
+    public void createStudent(final Student student) {
         final String SQL = "insert into students (uuid, student_number, first_name, middle_name, last_name, gender, birth_date, street_address, city_address, province_address) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(SQL, new Object[]{student.getUuid(), student.getStudentNumber(), student.getFirstName(), student.getMiddleName(), student.getLastName(), student.getGender(), student.getBirthDate(), student.getStreetAddress(), student.getCityAddress(), student.getProvinceAddress()});
     }
 
-    public boolean isStudentNumberAlreadyExist(final String studentNumber) {
-        final String SQL = "select count(*) from students where is_deleted = false and student_number = ?";
-        Integer count = jdbcTemplate.queryForObject(SQL, new Object[] {studentNumber}, Integer.class);
-        return count.intValue() > 0;
-    }
-
-    public void updateStudent(Student student) {
+    public void updateStudent(final Student student) {
         final String SQL = "update students set student_number = ?, first_name = ?, middle_name = ?, last_name = ?, gender = ?, birth_date = ?, street_address = ?, city_address = ?, province_address = ? where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{student.getStudentNumber(), student.getFirstName(), student.getMiddleName(), student.getLastName(), student.getGender(), student.getBirthDate(), student.getStreetAddress(), student.getCityAddress(), student.getProvinceAddress(), student.getUuid()});
     }
 
-    public void deleteStudentByUuid(final String uuid) {
+    public void deleteStudent(final Student student) {
         final String SQL = "delete from students where uuid = ?";
-        jdbcTemplate.update(SQL, new Object[]{uuid});
+        jdbcTemplate.update(SQL, new Object[]{student.getUuid()});
     }
 }

@@ -51,14 +51,15 @@
                 <small>Control Panel</small>
             </h1>
         </section>
-
         <section class="content">
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box">
                         <div class="box-header">
                             <h3 class="box-title">Subject List</h3>
-                            <button type="button" id="add-subject-button" class="btn btn-block btn-success pull-right add-button" data-toggle="modal" data-target="#add-subject-modal">Add Subject</button>
+                            <button type="button" class="btn btn-block btn-success pull-right add-button" data-toggle="modal" data-target="#modal-form">
+                                Add Subject
+                            </button>
                         </div>
                         <div class="box-body">
                             <table id="subject-table" class="table table-bordered table-striped">
@@ -68,6 +69,7 @@
                                     <th>Code</th>
                                     <th>Title</th>
                                     <th>Units</th>
+                                    <th>Hours</th>
                                     <th>Date Created</th>
                                     <th>Date Last Modified</th>
                                     <th id="actions-th">Actions</th>
@@ -81,9 +83,10 @@
                                     <th>Code</th>
                                     <th>Title</th>
                                     <th>Units</th>
+                                    <th>Hoursx`</th>
                                     <th>Date Created</th>
                                     <th>Date Last Modified</th>
-                                    <th id="actions-th">Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -92,50 +95,78 @@
                 </div>
             </div>
         </section>
+        <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-label">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="modal-label">Add Subject</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="code">Code</label>
+                                    <input type="text" class="form-control" id="code" placeholder="Code" maxlength="50" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="title">Title</label>
+                                    <input type="text" class="form-control" id="title" placeholder="Title" maxlength="250" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="units">Units</label>
+                                    <input type="number" class="form-control" id="units" step="0.1" min="0" value="0" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="hours">Hours</label>
+                                    <input type="number" class="form-control" id="hours" step="0.25" min="0" value="0" />
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary save-button">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notification-modal">
+            <p>Operation is successful</p>
+            <a class="close-notification-modal pull-right">
+                <i class="fa fa-fw fa-close"></i>
+            </a>
+        </div>
     </div>
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
             <b>Version</b> 0.0.0
         </div>
-        <strong>Copyright &copy; 2016-2017 <a href="https://www.facebook.com/nikkinicholasromero" target="_blank">Nikki Nicholas Romero</a>.</strong> All rights
-        reserved.
+        <strong>
+            Copyright &copy; 2016-2017
+            <a href="https://www.facebook.com/nikkinicholasromero" target="_blank">
+                Nikki Nicholas Romero
+            </a>.
+        </strong>
+        All rights reserved.
     </footer>
-
-    <div class="modal fade add-modal" id="add-subject-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="modal-label">Add Subject</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="code">Code</label>
-                        <input type="text" class="form-control" id="code" placeholder="Code" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" class="form-control" id="title" placeholder="Title" />
-                        <span class="help-block"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="units">Units</label>
-                        <input type="text" class="form-control" id="units" placeholder="Units" />
-                        <span class="help-block"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary save-button">Save</button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-
-<div class="notification-modal"><p>Operation is successful</p><a class="close-notification-modal pull-right"><i class="fa fa-fw fa-close"></i></a></div>
-
 <script src="/AdminLTE-2.3.3/plugins/jQuery/jQuery-2.2.0.min.js"></script>
 <script src="/AdminLTE-2.3.3/bootstrap/js/bootstrap.min.js"></script>
 <script src="/AdminLTE-2.3.3/plugins/datatables/jquery.dataTables.min.js"></script>

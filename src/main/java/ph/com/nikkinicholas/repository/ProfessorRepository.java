@@ -16,7 +16,7 @@ public class ProfessorRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Professor> getProfessorForDataTable(DataTablesRequest dataTablesRequest) {
+    public List<Professor> getProfessorForDataTable(final DataTablesRequest dataTablesRequest) {
         String columnOrders = "";
         final int orderColumn = dataTablesRequest.getOrder().get(0).getColumn();
         final String orderDir = dataTablesRequest.getOrder().get(0).getDir();
@@ -71,16 +71,15 @@ public class ProfessorRepository {
         return jdbcTemplate.queryForObject(SQL, Integer.class);
     }
 
-    public int getProfessorCountAfterFiltering(DataTablesRequest dataTablesRequest) {
+    public int getProfessorCountAfterFiltering(final DataTablesRequest dataTablesRequest) {
         final String searchCriteria = "%" + dataTablesRequest.getSearch().getValue() + "%";
         final String SQL = "select count(*) from professors where is_deleted = false and professor_number like ?";
         return jdbcTemplate.queryForObject(SQL, new Object[] { searchCriteria }, Integer.class);
     }
 
-    public Professor getProfessorByUuid(final String uuid) {
+    public Professor getProfessor(final Professor professor) {
         final String SQL = "select * from professors where uuid = ?";
-        return jdbcTemplate.queryForObject(SQL, new Object[]{uuid}, (rs, rowNum) -> {
-            Professor professor = new Professor();
+        return jdbcTemplate.queryForObject(SQL, new Object[]{professor.getUuid()}, (rs, rowNum) -> {
             professor.setUuid(rs.getString("uuid"));
             professor.setProfessorNumber(rs.getString("professor_number"));
             professor.setFirstName(rs.getString("first_name"));
@@ -95,24 +94,18 @@ public class ProfessorRepository {
         });
     }
 
-    public void createProfessor(Professor professor) {
+    public void createProfessor(final Professor professor) {
         final String SQL = "insert into professors (uuid, professor_number, first_name, middle_name, last_name, gender, birth_date, street_address, city_address, province_address) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(SQL, new Object[]{professor.getUuid(), professor.getProfessorNumber(), professor.getFirstName(), professor.getMiddleName(), professor.getLastName(), professor.getGender(), professor.getBirthDate(), professor.getStreetAddress(), professor.getCityAddress(), professor.getProvinceAddress()});
     }
 
-    public boolean isProfessorNumberAlreadyExist(final String professorNumber) {
-        final String SQL = "select count(*) from professors where is_deleted = false and professor_number = ?";
-        Integer count = jdbcTemplate.queryForObject(SQL, new Object[] {professorNumber}, Integer.class);
-        return count.intValue() > 0;
-    }
-
-    public void updateProfessor(Professor professor) {
+    public void updateProfessor(final Professor professor) {
         final String SQL = "update professors set professor_number = ?, first_name = ?, middle_name = ?, last_name = ?, gender = ?, birth_date = ?, street_address = ?, city_address = ?, province_address = ? where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{professor.getProfessorNumber(), professor.getFirstName(), professor.getMiddleName(), professor.getLastName(), professor.getGender(), professor.getBirthDate(), professor.getStreetAddress(), professor.getCityAddress(), professor.getProvinceAddress(), professor.getUuid()});
     }
 
-    public void deleteProfessorByUuid(final String uuid) {
+    public void deleteProfessor(final Professor professor) {
         final String SQL = "delete from professors where uuid = ?";
-        jdbcTemplate.update(SQL, new Object[]{uuid});
+        jdbcTemplate.update(SQL, new Object[]{professor.getUuid()});
     }
 }

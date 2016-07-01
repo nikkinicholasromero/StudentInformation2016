@@ -1,12 +1,10 @@
 package ph.com.nikkinicholas.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import ph.com.nikkinicholas.domain.Room;
 import ph.com.nikkinicholas.service.RoomService;
 import ph.com.nikkinicholas.util.datatables.DataTablesRequest;
@@ -51,5 +49,17 @@ public class RoomController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ValidationResult createRoom(@RequestBody Room room) {
         return roomService.createRoom(room);
+    }
+
+    @RequestMapping(value = "/updateRoom", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody ValidationResult updateRoom(@RequestBody Room room) {
+        return roomService.updateRoom(room);
+    }
+
+    @RequestMapping(value = "/deleteRoom", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteRoom(@RequestBody Room room) {
+        roomService.deleteRoom(room);
     }
 }

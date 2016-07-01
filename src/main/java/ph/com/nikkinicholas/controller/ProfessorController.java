@@ -1,12 +1,10 @@
 package ph.com.nikkinicholas.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import ph.com.nikkinicholas.domain.Professor;
 import ph.com.nikkinicholas.service.ProfessorService;
 import ph.com.nikkinicholas.util.datatables.DataTablesRequest;
@@ -51,5 +49,17 @@ public class ProfessorController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ValidationResult createProfessor(@RequestBody Professor professor) {
         return professorService.createProfessor(professor);
+    }
+
+    @RequestMapping(value = "/updateProfessor", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody ValidationResult updateProfessor(@RequestBody Professor professor) {
+        return professorService.updateProfessor(professor);
+    }
+
+    @RequestMapping(value = "/deleteProfessor", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteProfessor(@RequestBody Professor professor) {
+        professorService.deleteProfessor(professor);
     }
 }

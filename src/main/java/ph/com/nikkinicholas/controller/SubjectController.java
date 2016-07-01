@@ -1,12 +1,10 @@
 package ph.com.nikkinicholas.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import ph.com.nikkinicholas.domain.Subject;
 import ph.com.nikkinicholas.service.SubjectService;
 import ph.com.nikkinicholas.util.datatables.DataTablesRequest;
@@ -50,5 +48,17 @@ public class SubjectController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ValidationResult createSubject(@RequestBody Subject subject) {
         return subjectService.createSubject(subject);
+    }
+
+    @RequestMapping(value = "/updateSubject", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody ValidationResult updateSubject(@RequestBody Subject subject) {
+        return subjectService.updateSubject(subject);
+    }
+
+    @RequestMapping(value = "/deleteSubject", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteSubject(@RequestBody Subject subject) {
+        subjectService.deleteSubject(subject);
     }
 }

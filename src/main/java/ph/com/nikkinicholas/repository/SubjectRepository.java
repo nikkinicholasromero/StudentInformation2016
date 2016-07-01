@@ -16,7 +16,7 @@ public class SubjectRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Subject> getSubjectForDataTable(DataTablesRequest dataTablesRequest) {
+    public List<Subject> getSubjectForDataTable(final DataTablesRequest dataTablesRequest) {
         String columnOrders = "";
         final int orderColumn = dataTablesRequest.getOrder().get(0).getColumn();
         final String orderDir = dataTablesRequest.getOrder().get(0).getDir();
@@ -29,8 +29,10 @@ public class SubjectRepository {
         } else if(orderColumn == 3) {
             columnOrders = "order by units " + orderDir;
         } else if(orderColumn == 4) {
-            columnOrders = "order by date_created " + orderDir;
+            columnOrders = "order by hours " + orderDir;
         } else if(orderColumn == 5) {
+            columnOrders = "order by date_created " + orderDir;
+        } else if(orderColumn == 6) {
             columnOrders = "order by date_last_modified " + orderDir;
         }
 
@@ -42,6 +44,7 @@ public class SubjectRepository {
             subject.setCode(rs.getString("code"));
             subject.setTitle(rs.getString("title"));
             subject.setUnits(rs.getDouble("units"));
+            subject.setHours(rs.getDouble("hours"));
             subject.setDateCreated(rs.getTimestamp("date_created"));
             subject.setDateLastModified(rs.getTimestamp("date_last_modified"));
             return subject;
@@ -53,42 +56,36 @@ public class SubjectRepository {
         return jdbcTemplate.queryForObject(SQL, Integer.class);
     }
 
-    public int getSubjectCountAfterFiltering(DataTablesRequest dataTablesRequest) {
+    public int getSubjectCountAfterFiltering(final DataTablesRequest dataTablesRequest) {
         final String searchCriteria = "%" + dataTablesRequest.getSearch().getValue() + "%";
         final String SQL = "select count(*) from subjects where is_deleted = false and (code like ? or title like ? )";
         return jdbcTemplate.queryForObject(SQL, new Object[] { searchCriteria, searchCriteria }, Integer.class);
     }
 
-    public Subject getSubjectByUuid(final String uuid) {
+    public Subject getSubject(final Subject subject) {
         final String SQL = "select * from subjects where uuid = ?";
-        return jdbcTemplate.queryForObject(SQL, new Object[]{uuid}, (rs, rowNum) -> {
-            Subject subject = new Subject();
+        return jdbcTemplate.queryForObject(SQL, new Object[]{subject.getUuid()}, (rs, rowNum) -> {
             subject.setUuid(rs.getString("uuid"));
             subject.setCode(rs.getString("code"));
             subject.setTitle(rs.getString("title"));
             subject.setUnits(rs.getDouble("units"));
+            subject.setHours(rs.getDouble("hours"));
             return subject;
         });
     }
 
-    public void createSubject(Subject subject) {
-        final String SQL = "insert into subjects (uuid, code, title, units) values (?, ?, ?, ?)";
-        jdbcTemplate.update(SQL, new Object[]{subject.getUuid(), subject.getCode(), subject.getTitle(), subject.getUnits()});
+    public void createSubject(final Subject subject) {
+        final String SQL = "insert into subjects (uuid, code, title, units, hours) values (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(SQL, new Object[]{subject.getUuid(), subject.getCode(), subject.getTitle(), subject.getUnits(), subject.getHours()});
     }
 
-    public boolean isCodeAlreadyExist(final String code) {
-        final String SQL = "select count(*) from subjects where is_deleted = false and code = ?";
-        Integer count = jdbcTemplate.queryForObject(SQL, new Object[] {code}, Integer.class);
-        return count.intValue() > 0;
+    public void updateSubject(final Subject subject) {
+        final String SQL = "update subject set code = ?, title = ?, units = ?, hours = ? where uuid = ?";
+        jdbcTemplate.update(SQL, new Object[]{subject.getCode(), subject.getTitle(), subject.getUnits(), subject.getHours(), subject.getUuid()});
     }
 
-    public void updateSubject(Subject subject) {
-        final String SQL = "update subject set code = ?, title = ?, units = ? where uuid = ?";
-        jdbcTemplate.update(SQL, new Object[]{subject.getCode(), subject.getTitle(), subject.getUnits(), subject.getUuid()});
-    }
-
-    public void deleteSubjectByUuid(final String uuid) {
+    public void deleteSubject(final Subject subject) {
         final String SQL = "delete from subjects where uuid = ?";
-        jdbcTemplate.update(SQL, new Object[]{uuid});
+        jdbcTemplate.update(SQL, new Object[]{subject.getUuid()});
     }
 }

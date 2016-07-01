@@ -16,7 +16,7 @@ public class RoomRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Room> getRoomForDataTable(DataTablesRequest dataTablesRequest) {
+    public List<Room> getRoomForDataTable(final DataTablesRequest dataTablesRequest) {
         String columnOrders = "";
         final int orderColumn = dataTablesRequest.getOrder().get(0).getColumn();
         final String orderDir = dataTablesRequest.getOrder().get(0).getDir();
@@ -47,16 +47,15 @@ public class RoomRepository {
         return jdbcTemplate.queryForObject(SQL, Integer.class);
     }
 
-    public int getRoomCountAfterFiltering(DataTablesRequest dataTablesRequest) {
+    public int getRoomCountAfterFiltering(final DataTablesRequest dataTablesRequest) {
         final String searchCriteria = "%" + dataTablesRequest.getSearch().getValue() + "%";
         final String SQL = "select count(*) from rooms where is_deleted = false and room_number like ?";
         return jdbcTemplate.queryForObject(SQL, new Object[] { searchCriteria }, Integer.class);
     }
 
-    public Room getRoomByUuid(final String uuid) {
+    public Room getRoom(final Room room) {
         final String SQL = "select * from rooms where uuid = ?";
-        return jdbcTemplate.queryForObject(SQL, new Object[]{uuid}, (rs, rowNum) -> {
-            Room room = new Room();
+        return jdbcTemplate.queryForObject(SQL, new Object[]{room.getUuid()}, (rs, rowNum) -> {
             room.setUuid(rs.getString("uuid"));
             room.setRoomNumber(rs.getString("room_number"));
             room.setDateCreated(rs.getTimestamp("date_created"));
@@ -65,24 +64,18 @@ public class RoomRepository {
         });
     }
 
-    public void createRoom(Room room) {
+    public void createRoom(final Room room) {
         final String SQL = "insert into rooms (uuid, room_number) values (?, ?)";
         jdbcTemplate.update(SQL, new Object[]{room.getUuid(), room.getRoomNumber()});
     }
 
-    public boolean isRoomNumberAlreadyExist(final String roomNumber) {
-        final String SQL = "select count(*) from rooms where is_deleted = false and room_number = ?";
-        Integer count = jdbcTemplate.queryForObject(SQL, new Object[] {roomNumber}, Integer.class);
-        return count.intValue() > 0;
-    }
-
-    public void updateRoom(Room room) {
+    public void updateRoom(final Room room) {
         final String SQL = "update rooms set room_number = ? where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{room.getRoomNumber(), room.getUuid()});
     }
 
-    public void deleteRoomByUuid(final String uuid) {
+    public void deleteRoom(final Room room) {
         final String SQL = "delete from rooms where uuid = ?";
-        jdbcTemplate.update(SQL, new Object[]{uuid});
+        jdbcTemplate.update(SQL, new Object[]{room.getUuid()});
     }
 }

@@ -37,46 +37,71 @@ function initializeDataTables() {
 }
 
 function bindUIElementEvents() {
-    $('.add-modal .save-button').on('click', function() {
-       $.ajax({
-            'url': '/rooms/createRoom',
-            'type': 'POST',
-            'contentType': 'application/json;charset=utf-8',
-            'data': JSON.stringify({
-                'roomNumber': $('#room-number').val()
-            }),
-            'success': function(validationStatus) {
-                $('#add-room-modal .form-group').each(function() {
-                    $(this).find('.help-block').css('display', 'none');
-                    $(this).removeClass('has-error');
-                });
-
-                if(validationStatus.status == 'FAILED') {
-                    if(validationStatus.errorCodeList.indexOf('ROOM_ROOM_NUMBER_MISSING') > -1) {
-                        $('#room-number').parent().find('.help-block').css('display', 'block');
-                        $('#room-number').parent().find('.help-block').html('Room number is mandatory');
-                        $('#room-number').parent().addClass('has-error');
-                    } else if(validationStatus.errorCodeList.indexOf('ROOM_ROOM_NUMBER_DUPLICATE') > -1) {
-                        $('#room-number').parent().find('.help-block').css('display', 'block');
-                        $('#room-number').parent().find('.help-block').html('Room number already exist');
-                        $('#room-number').parent().addClass('has-error');
-                    } else if(validationStatus.errorCodeList.indexOf('ROOM_ROOM_NUMBER_TOO_LONG') > -1) {
-                        $('#room-number').parent().find('.help-block').css('display', 'block');
-                        $('#room-number').parent().find('.help-block').html('Room number should not exceed 150 characters');
-                        $('#room-number').parent().addClass('has-error');
-                    }
-                } else {
-                    $('#add-room-modal').modal('hide');
-
-                    $('.notification-modal p').html('Successfully added new room');
-                    $('.notification-modal').addClass('notification-modal-show');
-                    setTimeout(function() {
-                        $('.notification-modal').removeClass('notification-modal-show');
-                    }, 3000);
-
-                    $('#room-table').DataTable().draw();
-                }
-            }
-       });
+    $('#modal-form').on('hidden.bs.modal', function (e) {
+        clearFormWarnings();
+        clearFormValues();
     });
+
+    $('#modal-form .save-button').on('click', function() {
+        clearFormWarnings();
+
+        var room = {
+            'roomNumber': $('#room-number').val()
+        };
+
+        var validationStatus = validateRoom(room);
+        if(validationStatus.status == "SUCCESS") {
+            $.ajax({
+                'url': '/rooms/createRoom',
+                'type': 'POST',
+                'contentType': 'application/json;charset=utf-8',
+                'data': JSON.stringify(room),
+                'success': function(validationStatus) {
+                    if(validationStatus.status == 'SUCCESS') {
+                        $('#modal-form').modal('hide');
+                        showNotificationModal('Successfully added new room');
+                        $('#room-table').DataTable().draw();
+                    } else if(validationStatus.status == 'FAILED') {
+                        showValidationStatus(validationStatus);
+                    }
+                }
+            });
+        } else {
+            showValidationStatus(validationStatus);
+        }
+    });
+}
+
+function clearFormValues() {
+    $('#room-number').val("");
+}
+
+function validateRoom(room) {
+    var validationStatus = {"status": "SUCCESS", "errorCodeList": []};
+
+    if(!room.roomNumber) {
+        validationStatus.status = "FAILED";
+        validationStatus.errorCodeList.push("ROOM_ROOM_NUMBER_MISSING");
+    } else if(room.roomNumber.length > 150) {
+        validationStatus.status = "FAILED";
+        validationStatus.errorCodeList.push("ROOM_ROOM_NUMBER_TOO_LONG");
+    }
+
+    return validationStatus;
+}
+
+function showValidationStatus(validationStatus) {
+    if(validationStatus.errorCodeList.indexOf('ROOM_ROOM_NUMBER_MISSING') > -1) {
+        $('#room-number').parent().find('.help-block').css('display', 'block');
+        $('#room-number').parent().find('.help-block').html('Room number is mandatory');
+        $('#room-number').parent().addClass('has-error');
+    } else if(validationStatus.errorCodeList.indexOf('ROOM_ROOM_NUMBER_DUPLICATE') > -1) {
+        $('#room-number').parent().find('.help-block').css('display', 'block');
+        $('#room-number').parent().find('.help-block').html('Room number already exist');
+        $('#room-number').parent().addClass('has-error');
+    } else if(validationStatus.errorCodeList.indexOf('ROOM_ROOM_NUMBER_TOO_LONG') > -1) {
+        $('#room-number').parent().find('.help-block').css('display', 'block');
+        $('#room-number').parent().find('.help-block').html('Room number should not exceed 150 characters');
+        $('#room-number').parent().addClass('has-error');
+    }
 }

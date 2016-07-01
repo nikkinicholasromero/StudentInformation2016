@@ -2,6 +2,7 @@ package ph.com.nikkinicholas.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import ph.com.nikkinicholas.domain.Professor;
 import ph.com.nikkinicholas.repository.ProfessorRepository;
@@ -22,7 +23,7 @@ public class ProfessorService {
     @Autowired
     private ProfessorRepository professorRepository;
 
-    public List<Professor> getProfessorForDataTable(DataTablesRequest dataTablesRequest) {
+    public List<Professor> getProfessorForDataTable(final DataTablesRequest dataTablesRequest) {
         return professorRepository.getProfessorForDataTable(dataTablesRequest);
     }
 
@@ -30,38 +31,48 @@ public class ProfessorService {
         return professorRepository.getProfessorCountBeforeFiltering();
     }
 
-    public int getProfessorCountAfterFiltering(DataTablesRequest dataTablesRequest) {
+    public int getProfessorCountAfterFiltering(final DataTablesRequest dataTablesRequest) {
         return professorRepository.getProfessorCountAfterFiltering(dataTablesRequest);
     }
 
-    public Professor getProfessorByUuid(final String uuid) {
-        return professorRepository.getProfessorByUuid(uuid);
+    public Professor getProfessor(final Professor professor) {
+        return professorRepository.getProfessor(professor);
     }
 
-    public ValidationResult createProfessor(Professor professor) {
-        ValidationResult validationResult = validateCreateProfessor(professor);
+    public ValidationResult createProfessor(final Professor professor) {
+        ValidationResult validationResult = validateProfessor(professor);
         if(validationResult.getStatus() == Status.SUCCESS) {
-            professor.setUuid(UUID.randomUUID().toString());
-            professorRepository.createProfessor(professor);
+            try {
+                professor.setUuid(UUID.randomUUID().toString());
+                professorRepository.createProfessor(professor);
+            } catch (DuplicateKeyException e) {
+                validationResult.addErrorCode(ErrorCode.PROFESSOR_PROFESSOR_NUMBER_DUPLICATE);
+            }
         }
         return validationResult;
     }
 
-    public void updateProfessor(Professor professor) {
-        professorRepository.updateProfessor(professor);
+    public ValidationResult updateProfessor(final Professor professor) {
+        ValidationResult validationResult = validateProfessor(professor);
+        if(validationResult.getStatus() == Status.SUCCESS) {
+            try {
+                professorRepository.updateProfessor(professor);
+            } catch (DuplicateKeyException e) {
+                validationResult.addErrorCode(ErrorCode.PROFESSOR_PROFESSOR_NUMBER_DUPLICATE);
+            }
+        }
+        return validationResult;
     }
 
-    public void deleteProfessorByUuid(final String uuid) {
-        professorRepository.deleteProfessorByUuid(uuid);
+    public void deleteProfessor(final Professor professor) {
+        professorRepository.deleteProfessor(professor);
     }
 
-    private ValidationResult validateCreateProfessor(Professor professor) {
+    private ValidationResult validateProfessor(Professor professor) {
         ValidationResult validationResult = new ValidationResult();
 
         if(StringUtils.isEmpty(professor.getProfessorNumber())) {
             validationResult.addErrorCode(ErrorCode.PROFESSOR_PROFESSOR_NUMBER_MISSING);
-        } else if(isProfessorNumberAlreadyExist(professor.getProfessorNumber())) {
-            validationResult.addErrorCode(ErrorCode.PROFESSOR_PROFESSOR_NUMBER_DUPLICATE);
         } else if(professor.getProfessorNumber().length() > 15) {
             validationResult.addErrorCode(ErrorCode.PROFESSOR_PROFESSOR_NUMBER_TOO_LONG);
         }
@@ -113,9 +124,5 @@ public class ProfessorService {
         }
 
         return validationResult;
-    }
-
-    private boolean isProfessorNumberAlreadyExist(final String professorNumber) {
-        return professorRepository.isProfessorNumberAlreadyExist(professorNumber);
     }
 }

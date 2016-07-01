@@ -2,6 +2,7 @@ package ph.com.nikkinicholas.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import ph.com.nikkinicholas.domain.Subject;
 import ph.com.nikkinicholas.repository.SubjectRepository;
@@ -21,7 +22,7 @@ public class SubjectService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    public List<Subject> getSubjectForDataTable(DataTablesRequest dataTablesRequest) {
+    public List<Subject> getSubjectForDataTable(final DataTablesRequest dataTablesRequest) {
         return subjectRepository.getSubjectForDataTable(dataTablesRequest);
     }
 
@@ -29,39 +30,48 @@ public class SubjectService {
         return subjectRepository.getSubjectCountBeforeFiltering();
     }
 
-    public int getSubjectCountAfterFiltering(DataTablesRequest dataTablesRequest) {
+    public int getSubjectCountAfterFiltering(final DataTablesRequest dataTablesRequest) {
         return subjectRepository.getSubjectCountAfterFiltering(dataTablesRequest);
     }
 
-    public Subject getSubjectByUuid(final String uuid) {
-        return subjectRepository.getSubjectByUuid(uuid);
+    public Subject getSubject(final Subject subject) {
+        return subjectRepository.getSubject(subject);
     }
 
-    public ValidationResult createSubject(Subject subject) {
-        ValidationResult validationResult = validateCreateSubject(subject);
+    public ValidationResult createSubject(final Subject subject) {
+        ValidationResult validationResult = validateSubject(subject);
         if(validationResult.getStatus() == Status.SUCCESS) {
-            subject.setUuid(UUID.randomUUID().toString());
-            subjectRepository.createSubject(subject);
+            try {
+                subject.setUuid(UUID.randomUUID().toString());
+                subjectRepository.createSubject(subject);
+            } catch (DuplicateKeyException e) {
+                validationResult.addErrorCode(ErrorCode.SUBJECT_CODE_DUPLICATE);
+            }
         }
         return validationResult;
     }
 
-    public void updateSubject(Subject subject) {
-        subjectRepository.updateSubject(subject);
+    public ValidationResult updateSubject(final Subject subject) {
+        ValidationResult validationResult = validateSubject(subject);
+        if(validationResult.getStatus() == Status.SUCCESS) {
+            try {
+                subjectRepository.updateSubject(subject);
+            } catch (DuplicateKeyException e) {
+                validationResult.addErrorCode(ErrorCode.SUBJECT_CODE_DUPLICATE);
+            }
+        }
+        return validationResult;
     }
 
-    public void deleteSubjectByUuid(final String uuid) {
-        subjectRepository.deleteSubjectByUuid(uuid);
+    public void deleteSubject(final Subject subject) {
+        subjectRepository.deleteSubject(subject);
     }
 
-
-    private ValidationResult validateCreateSubject(Subject subject) {
+    private ValidationResult validateSubject(Subject subject) {
         ValidationResult validationResult = new ValidationResult();
 
         if(StringUtils.isEmpty(subject.getCode())) {
             validationResult.addErrorCode(ErrorCode.SUBJECT_CODE_MISSING);
-        } else if(isCodeAlreadyExist(subject.getCode())) {
-            validationResult.addErrorCode(ErrorCode.SUBJECT_CODE_DUPLICATE);
         } else if(subject.getCode().length() > 50) {
             validationResult.addErrorCode(ErrorCode.SUBJECT_CODE_TOO_LONG);
         }
@@ -78,10 +88,12 @@ public class SubjectService {
             validationResult.addErrorCode(ErrorCode.SUBJECT_UNITS_INVALID);
         }
 
-        return validationResult;
-    }
+        if(subject.getHours() == 0) {
+            validationResult.addErrorCode(ErrorCode.SUBJECT_HOURS_MISSING);
+        } else if(subject.getHours() < 0) {
+            validationResult.addErrorCode(ErrorCode.SUBJECT_HOURS_INVALID);
+        }
 
-    private boolean isCodeAlreadyExist(final String code) {
-        return subjectRepository.isCodeAlreadyExist(code);
+        return validationResult;
     }
 }
