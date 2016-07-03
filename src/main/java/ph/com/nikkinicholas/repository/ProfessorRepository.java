@@ -100,12 +100,12 @@ public class ProfessorRepository {
     }
 
     public void updateProfessor(final Professor professor) {
-        final String SQL = "update professors set professor_number = ?, first_name = ?, middle_name = ?, last_name = ?, gender = ?, birth_date = ?, street_address = ?, city_address = ?, province_address = ? where uuid = ?";
+        final String SQL = "update professors set professor_number = ?, first_name = ?, middle_name = ?, last_name = ?, gender = ?, birth_date = ?, street_address = ?, city_address = ?, province_address = ?, date_last_modified = now() where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{professor.getProfessorNumber(), professor.getFirstName(), professor.getMiddleName(), professor.getLastName(), professor.getGender(), professor.getBirthDate(), professor.getStreetAddress(), professor.getCityAddress(), professor.getProvinceAddress(), professor.getUuid()});
     }
 
     public void deleteProfessor(final Professor professor) {
-        final String SQL = "delete from professors where uuid = ?";
+        final String SQL = "update professors set is_deleted = true, date_last_modified = now() where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{professor.getUuid()});
     }
 }

@@ -100,12 +100,12 @@ public class StudentRepository {
     }
 
     public void updateStudent(final Student student) {
-        final String SQL = "update students set student_number = ?, first_name = ?, middle_name = ?, last_name = ?, gender = ?, birth_date = ?, street_address = ?, city_address = ?, province_address = ? where uuid = ?";
+        final String SQL = "update students set student_number = ?, first_name = ?, middle_name = ?, last_name = ?, gender = ?, birth_date = ?, street_address = ?, city_address = ?, province_address = ?, date_last_modified = now() where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{student.getStudentNumber(), student.getFirstName(), student.getMiddleName(), student.getLastName(), student.getGender(), student.getBirthDate(), student.getStreetAddress(), student.getCityAddress(), student.getProvinceAddress(), student.getUuid()});
     }
 
     public void deleteStudent(final Student student) {
-        final String SQL = "delete from students where uuid = ?";
+        final String SQL = "update students set is_deleted = true, date_last_modified = now() where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{student.getUuid()});
     }
 }

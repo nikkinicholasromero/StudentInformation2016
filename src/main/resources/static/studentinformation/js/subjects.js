@@ -1,3 +1,7 @@
+var activeUuid = '';
+var actionUrl = '/subjects';
+var notificationMessage = 'Operation is successful';
+
 $(document).on('ready', function () {
     initializeDataTables();
     bindUIElementEvents();
@@ -35,15 +39,49 @@ function initializeDataTables() {
             "orderable": false,
             "searchable": false,
             "defaultContent":
-                '<button type="button" class="btn btn-block btn-primary btn-sm">Edit</button>' +
-                '<button type="button" class="btn btn-block btn-danger btn-sm">Delete</button>'
+                '<button type="button" class="btn btn-block btn-primary btn-sm edit-button">Edit</button>' +
+                '<button type="button" class="btn btn-block btn-danger btn-sm delete-button">Delete</button>'
         }],
         "autoWidth": false
     });
 }
 
 function bindUIElementEvents() {
-    $('#modal-form').on('hidden.bs.modal', function (e) {
+    $(document).on('click', '.add-button', function() {
+        $('#modal-form .modal-title').html('Add Subject');
+        activeUuid = '';
+        actionUrl = '/subjects/createSubject';
+        notificationMessage = 'Successfully added new subject';
+    });
+
+    $(document).on('click', '.edit-button', function() {
+        $('#modal-form .modal-title').html('Edit Subject');
+        activeUuid = $(this).parent().parent().find('td.hide-column').html();
+        actionUrl = '/subjects/updateSubject';
+        notificationMessage = 'Successfully updated subject';
+
+        $('#modal-form').modal('show');
+        $.ajax({
+            'url': '/subjects/getSubject',
+            'type': 'POST',
+            'contentType': 'application/json;charset=utf-8',
+            'data': JSON.stringify({'uuid': activeUuid}),
+            'success': function(subject) {
+                $('#code').val(subject.code);
+                $('#title').val(subject.title);
+                $('#units').val(subject.units);
+                $('#hours').val(subject.hours);
+            }
+        });
+    });
+
+    $(document).on('click', '.delete-button', function() {
+        activeUuid = $(this).parent().parent().find('td.hide-column').html();
+        actionUrl = '/subjects/deleteSubject';
+        notificationMessage = 'Successfully deleted subject';
+    });
+
+    $('#modal-form').on('hidden.bs.modal', function(e) {
         clearFormValues();
         clearFormWarnings();
     });
@@ -52,6 +90,7 @@ function bindUIElementEvents() {
         clearFormWarnings();
 
         var subject = {
+            'uuid': activeUuid,
             'code': $('#code').val(),
             'title': $('#title').val(),
             'units': $('#units').val(),
@@ -61,14 +100,14 @@ function bindUIElementEvents() {
         var validationStatus = validateSubject(subject);
         if(validationStatus.status == "SUCCESS") {
             $.ajax({
-                'url': '/subjects/createSubject',
+                'url': actionUrl,
                 'type': 'POST',
                 'contentType': 'application/json;charset=utf-8',
                 'data': JSON.stringify(subject),
                 'success': function(validationStatus) {
                     if(validationStatus.status == 'SUCCESS') {
                         $('#modal-form').modal('hide');
-                        showNotificationModal('Successfully added new subject');
+                        showNotificationModal(notificationMessage);
                         $('#subject-table').DataTable().draw();
                     } else if(validationStatus.status == 'FAILED') {
                         showValidationStatus(validationStatus);

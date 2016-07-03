@@ -51,6 +51,12 @@ public class RoomController {
         return roomService.createRoom(room);
     }
 
+    @RequestMapping(value = "/getRoom", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody Room getRoom(@RequestBody Room room) {
+        return roomService.getRoom(room);
+    }
+
     @RequestMapping(value = "/updateRoom", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ValidationResult updateRoom(@RequestBody Room room) {

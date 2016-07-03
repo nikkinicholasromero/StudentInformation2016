@@ -70,12 +70,12 @@ public class RoomRepository {
     }
 
     public void updateRoom(final Room room) {
-        final String SQL = "update rooms set room_number = ? where uuid = ?";
+        final String SQL = "update rooms set room_number = ?, date_last_modified = now() where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{room.getRoomNumber(), room.getUuid()});
     }
 
     public void deleteRoom(final Room room) {
-        final String SQL = "delete from rooms where uuid = ?";
+        final String SQL = "update rooms set is_deleted = true, date_last_modified = now() where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{room.getUuid()});
     }
 }

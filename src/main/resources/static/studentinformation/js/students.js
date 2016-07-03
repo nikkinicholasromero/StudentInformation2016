@@ -1,3 +1,7 @@
+var activeUuid = '';
+var actionUrl = '/students';
+var notificationMessage = 'Operation is successful';
+
 $(document).on('ready', function () {
     initializeDataTables();
     bindUIElementEvents();
@@ -45,15 +49,54 @@ function initializeDataTables() {
             "orderable": false,
             "searchable": false,
             "defaultContent":
-                '<button type="button" class="btn btn-block btn-primary btn-sm">Edit</button>' +
-                '<button type="button" class="btn btn-block btn-danger btn-sm">Delete</button>'
+                '<button type="button" class="btn btn-block btn-primary btn-sm edit-button">Edit</button>' +
+                '<button type="button" class="btn btn-block btn-danger btn-sm delete-button">Delete</button>'
         }],
         "autoWidth": false
     });
 }
 
 function bindUIElementEvents() {
-    $('#modal-form').on('hidden.bs.modal', function (e) {
+    $(document).on('click', '.add-button', function() {
+        $('#modal-form .modal-title').html('Add Student');
+        activeUuid = '';
+        actionUrl = '/students/createStudent';
+        notificationMessage = 'Successfully added new student';
+    });
+
+    $(document).on('click', '.edit-button', function() {
+        $('#modal-form .modal-title').html('Edit Student');
+        activeUuid = $(this).parent().parent().find('td.hide-column').html();
+        actionUrl = '/students/updateStudent';
+        notificationMessage = 'Successfully updated student';
+
+        $('#modal-form').modal('show');
+        $.ajax({
+            'url': '/students/getStudent',
+            'type': 'POST',
+            'contentType': 'application/json;charset=utf-8',
+            'data': JSON.stringify({'uuid': activeUuid}),
+            'success': function(student) {
+                $('#student-number').val(student.studentNumber);
+                $('#first-name').val(student.firstName);
+                $('#middle-name').val(student.middleName);
+                $('#last-name').val(student.lastName);
+                $('#gender').val(student.gender);
+                $('#birth-date').val(student.birthDate);
+                $('#street').val(student.streetAddress);
+                $('#city').val(student.cityAddress);
+                $('#province').val(student.provinceAddress);
+            }
+        });
+    });
+
+    $(document).on('click', '.delete-button', function() {
+        activeUuid = $(this).parent().parent().find('td.hide-column').html();
+        actionUrl = '/students/deleteStudent';
+        notificationMessage = 'Successfully deleted student';
+    });
+
+    $('#modal-form').on('hidden.bs.modal', function(e) {
         clearFormValues();
         clearFormWarnings();
     });
@@ -62,6 +105,7 @@ function bindUIElementEvents() {
         clearFormWarnings();
 
         var student = {
+            'uuid': activeUuid,
             'studentNumber': $('#student-number').val(),
             'firstName': $('#first-name').val(),
             'middleName': $('#middle-name').val(),
@@ -76,14 +120,14 @@ function bindUIElementEvents() {
         var validationStatus = validateStudent(student);
         if(validationStatus.status == "SUCCESS") {
             $.ajax({
-                'url': '/students/createStudent',
+                'url': actionUrl,
                 'type': 'POST',
                 'contentType': 'application/json;charset=utf-8',
                 'data': JSON.stringify(student),
                 'success': function(validationStatus) {
                     if(validationStatus.status == 'SUCCESS') {
                         $('#modal-form').modal('hide');
-                        showNotificationModal('Successfully added new student');
+                        showNotificationModal(notificationMessage);
                         $('#student-table').DataTable().draw();
                     } else if(validationStatus.status == 'FAILED') {
                         showValidationStatus(validationStatus);

@@ -49,6 +49,12 @@ public class StudentController {
         return studentService.createStudent(student);
     }
 
+    @RequestMapping(value = "/getStudent", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody Student getStudent(@RequestBody Student student) {
+        return studentService.getStudent(student);
+    }
+
     @RequestMapping(value = "/updateStudent", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ValidationResult updateStudent(@RequestBody Student student) {

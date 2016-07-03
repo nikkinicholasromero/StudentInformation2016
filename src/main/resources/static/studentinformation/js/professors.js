@@ -1,3 +1,7 @@
+var activeUuid = '';
+var actionUrl = '/professors';
+var notificationMessage = 'Operation is successful';
+
 $(document).on('ready', function () {
     initializeDataTables();
     bindUIElementEvents();
@@ -45,15 +49,54 @@ function initializeDataTables() {
             "orderable": false,
             "searchable": false,
             "defaultContent":
-                '<button type="button" class="btn btn-block btn-primary btn-sm">Edit</button>' +
-                '<button type="button" class="btn btn-block btn-danger btn-sm">Delete</button>'
+                '<button type="button" class="btn btn-block btn-primary btn-sm edit-button">Edit</button>' +
+                '<button type="button" class="btn btn-block btn-danger btn-sm delete-button">Delete</button>'
         }],
         "autoWidth": false
     });
 }
 
 function bindUIElementEvents() {
-    $('#modal-form').on('hidden.bs.modal', function (e) {
+    $(document).on('click', '.add-button', function() {
+        $('#modal-form .modal-title').html('Add Professor');
+        activeUuid = '';
+        actionUrl = '/professors/createProfessor';
+        notificationMessage = 'Successfully added new professor';
+    });
+
+    $(document).on('click', '.edit-button', function() {
+        $('#modal-form .modal-title').html('Edit Professor');
+        activeUuid = $(this).parent().parent().find('td.hide-column').html();
+        actionUrl = '/professors/updateProfessor';
+        notificationMessage = 'Successfully updated professor';
+
+        $('#modal-form').modal('show');
+        $.ajax({
+            'url': '/professors/getProfessor',
+            'type': 'POST',
+            'contentType': 'application/json;charset=utf-8',
+            'data': JSON.stringify({'uuid': activeUuid}),
+            'success': function(professor) {
+                $('#professor-number').val(professor.professorNumber);
+                $('#first-name').val(professor.firstName);
+                $('#middle-name').val(professor.middleName);
+                $('#last-name').val(professor.lastName);
+                $('#gender').val(professor.gender);
+                $('#birth-date').val(professor.birthDate);
+                $('#street').val(professor.streetAddress);
+                $('#city').val(professor.cityAddress);
+                $('#province').val(professor.provinceAddress);
+            }
+        });
+    });
+
+    $(document).on('click', '.delete-button', function() {
+        activeUuid = $(this).parent().parent().find('td.hide-column').html();
+        actionUrl = '/professors/deleteProfessor';
+        notificationMessage = 'Successfully deleted professor';
+    });
+
+    $('#modal-form').on('hidden.bs.modal', function(e) {
         clearFormValues();
         clearFormWarnings();
     });
@@ -62,6 +105,7 @@ function bindUIElementEvents() {
         clearFormWarnings();
 
         var professor = {
+            'uuid': activeUuid,
             'professorNumber': $('#professor-number').val(),
             'firstName': $('#first-name').val(),
             'middleName': $('#middle-name').val(),
@@ -76,14 +120,14 @@ function bindUIElementEvents() {
         var validationStatus = validateProfessor(professor);
         if(validationStatus.status == "SUCCESS") {
             $.ajax({
-                'url': '/professors/createProfessor',
+                'url': actionUrl,
                 'type': 'POST',
                 'contentType': 'application/json;charset=utf-8',
                 'data': JSON.stringify(professor),
                 'success': function(validationStatus) {
                     if(validationStatus.status == 'SUCCESS') {
                         $('#modal-form').modal('hide');
-                        showNotificationModal('Successfully added new professor');
+                        showNotificationModal(notificationMessage);
                         $('#professor-table').DataTable().draw();
                     } else if(validationStatus.status == 'FAILED') {
                         showValidationStatus(validationStatus);

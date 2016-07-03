@@ -52,7 +52,6 @@ public class RoomService {
     }
 
     public ValidationResult updateRoom(final Room room) {
-        roomRepository.updateRoom(room);
         ValidationResult validationResult = validateRoom(room);
         if(validationResult.getStatus() == Status.SUCCESS) {
             try {

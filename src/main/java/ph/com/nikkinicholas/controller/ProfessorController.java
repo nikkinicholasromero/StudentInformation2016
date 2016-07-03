@@ -51,6 +51,12 @@ public class ProfessorController {
         return professorService.createProfessor(professor);
     }
 
+    @RequestMapping(value = "/getProfessor", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody Professor getProfessor(@RequestBody Professor professor) {
+        return professorService.getProfessor(professor);
+    }
+
     @RequestMapping(value = "/updateProfessor", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ValidationResult updateProfessor(@RequestBody Professor professor) {

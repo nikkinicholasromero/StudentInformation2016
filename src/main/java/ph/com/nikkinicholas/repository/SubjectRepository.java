@@ -80,12 +80,12 @@ public class SubjectRepository {
     }
 
     public void updateSubject(final Subject subject) {
-        final String SQL = "update subject set code = ?, title = ?, units = ?, hours = ? where uuid = ?";
+        final String SQL = "update subjects set code = ?, title = ?, units = ?, hours = ?, date_last_modified = now() where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{subject.getCode(), subject.getTitle(), subject.getUnits(), subject.getHours(), subject.getUuid()});
     }
 
     public void deleteSubject(final Subject subject) {
-        final String SQL = "delete from subjects where uuid = ?";
+        final String SQL = "update subjects set is_deleted = true, date_last_modified = now() where uuid = ?";
         jdbcTemplate.update(SQL, new Object[]{subject.getUuid()});
     }
 }

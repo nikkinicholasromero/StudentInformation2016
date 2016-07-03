@@ -50,6 +50,12 @@ public class SubjectController {
         return subjectService.createSubject(subject);
     }
 
+    @RequestMapping(value = "/getSubject", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody Subject getSubject(@RequestBody Subject subject) {
+        return subjectService.getSubject(subject);
+    }
+
     @RequestMapping(value = "/updateSubject", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ValidationResult updateSubject(@RequestBody Subject subject) {
