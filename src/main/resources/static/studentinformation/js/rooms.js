@@ -34,7 +34,7 @@ function initializeDataTables() {
             "searchable": false,
             "defaultContent":
                 '<button type="button" class="btn btn-block btn-primary btn-sm edit-button">Edit</button>' +
-                '<button type="button" class="btn btn-block btn-danger btn-sm delete-button">Delete</button>'
+                '<button type="button" class="btn btn-block btn-danger btn-sm delete-button" data-toggle="modal" data-target="#delete-modal">Delete</button>'
         }],
         "autoWidth": false
     });
@@ -105,6 +105,20 @@ function bindUIElementEvents() {
         } else {
             showValidationStatus(validationStatus);
         }
+    });
+
+    $('#delete-modal .save-button').on('click', function() {
+        $.ajax({
+            'url': actionUrl,
+            'type': 'POST',
+            'contentType': 'application/json;charset=utf-8',
+            'data': JSON.stringify({'uuid': activeUuid}),
+            'success': function() {
+                $('#delete-modal').modal('hide');
+                showNotificationModal(notificationMessage);
+                $('#room-table').DataTable().draw();
+            }
+        });
     });
 }
 
